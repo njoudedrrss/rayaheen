@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Models\Book;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -8,8 +9,23 @@ use Illuminate\Support\Facades\Storage; // Make sure to import this
 class CategoryController extends Controller
 {
     public function index()
-    {
+    {       $categories = Category::select('id', 'name', 'created_at', 'updated_at', 'cover_image')->get();
 
+        // Fetch books (or items)
+        $items = Book::select('id', 'title', 'description', 'author', 'publisher', 'year', 'price', 'cover_image', 'category_id', 'created_at', 'updated_at', 'count')->get();
+
+        // Return the response in the required format
+        return response()->json([
+            'categories' => [
+                'data' => $categories
+            ],
+            'items' => [
+                'data' => $items
+            ],
+            'status' => 'success'
+        ]);
+    }
+/*
          $categories = Category::with('books')->get();
       $categories = $categories->map(function ($category) {
             $category->id = (string) $category->id;
@@ -21,7 +37,7 @@ class CategoryController extends Controller
             return $category;
         });
  //$categories = Category::all();
-        return response()->json(['data'=>$categories,'status'=>'success'],200);    }
+        return response()->json(['data'=>$categories,'status'=>'success'],200);    }*/
 
     public function store(Request $request)
     {
